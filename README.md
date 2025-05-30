@@ -1,16 +1,26 @@
-# tank_app
+# 🛡️ Mini Tank Controller
 
-A new Flutter project.
+This app allows remote control of a custom-built mini tank, made using:
+- Arduino R4 WiFi
+- 3D-printed chassis and all other parts
+- Flutter mobile application (Android)
+- Bluetooth communication
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## App Features
 
-A few resources to get you started if this is your first Flutter project:
+- Control movement (forward, backward, turn)
+- Connect via Bluetooth
+- Barrel and firing commands
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Hardware Overview
+
+- **Microcontroller**: Arduino R4 WiFi
+- **Motor driver**: two bts7960
+- **Power**: LiPo battery 12V
+- **Chassis**: Fully 3D-printed (custom design)
+
+📂 Arduino code is in the `/arduino_tank_code/code_tank` folder.
