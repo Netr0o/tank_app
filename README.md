@@ -1,4 +1,9 @@
-# 🛡️ Mini Tank Controller
+    ___
+ __(   )====::
+/~~~~~~~~~\
+\O.O.O.O.O/
+
+# Mini Tank Controller
 
 This app allows remote control of a custom-built mini tank, made using:
 - Arduino R4 WiFi
@@ -23,4 +28,4 @@ This app allows remote control of a custom-built mini tank, made using:
 - **Power**: LiPo battery 12V
 - **Chassis**: Fully 3D-printed (custom design)
 
-📂 Arduino code is in the `/arduino_tank_code/code_tank` folder.
+Arduino code is in the `/arduino_tank_code/code_tank` folder.
