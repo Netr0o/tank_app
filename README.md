@@ -1,9 +1,11 @@
 
 # Mini Tank Controller
 
-    .--._____,
- .-='=='==-, "
-(O_o_o_o_o_O)
+```
+        .--._____,
+     .-='=='==-, "
+    (O_o_o_o_o_O)
+```
 
 This app allows remote control of a custom-built mini tank, made using:
 - Arduino R4 WiFi
