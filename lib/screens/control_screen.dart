@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/screens/firing_screen.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ControlScreen extends StatefulWidget {
   const ControlScreen({super.key});
@@ -23,15 +24,39 @@ class _ControlScreenState extends State<ControlScreen> {
     _startScan();
   }
 
-  void _startScan() {
+  Future<bool> requestBluetoothPermissions() async {
+    final status = await [
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.location
+    ].request();
+    return status.values.every((s) => s.isGranted);
+  }
+
+
+  void _startScan() async {
+    var status = await requestBluetoothPermissions();
+
+    if (!status) {
+      print("perm pas accordée");
+    }
+
+    bool isOn = await FlutterBluePlus.isOn;
+    if (isOn) {
+      print("bluetooth disconnected");
+      return;
+    }
+
     FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
 
     FlutterBluePlus.scanResults.listen((results) async {
       for (ScanResult r in results) {
-        if (r.device.name == targetDeviceName) {
-          print("device: ${r.device.name}");
+        print(r);
+        if (r.advertisementData.advName == targetDeviceName) {
+          print("found device: ${r.advertisementData.advName}");
           FlutterBluePlus.stopScan();
           await _connectToDevice(r.device);
+          break;
         }
       }
     });
@@ -58,8 +83,15 @@ class _ControlScreenState extends State<ControlScreen> {
 
   void _sendOne() async {
     if (_characteristic != null) {
-      await _characteristic!.write([0x01]);
-      print("send: 1");
+      await _characteristic!.write([0x01], withoutResponse: false);
+      print("send: 0x01");
+    }
+  }
+
+  void _sendZero() async {
+    if (_characteristic != null) {
+      await _characteristic!.write([0x0]);
+      print("send: 0x00");
     }
   }
 
@@ -134,19 +166,28 @@ class _ControlScreenState extends State<ControlScreen> {
                     onPressed: _characteristic != null ? _sendOne : null,
                     child: const SizedBox(
                       width: 100,
-                      height: 120,
+                      height: 80,
                       child: Center(
                         child: Text("FORWARD"),
                       ),
                     ),
                   ),
                   ElevatedButton(
+                      onPressed: _characteristic != null ? _sendZero : null,
+                      child: const SizedBox(
+                        width: 100,
+                        height: 80,
+                        child: Center(
+                          child: Text("STOP"),
+                        ),
+                      )),
+                  ElevatedButton(
                     onPressed: () {
                       print("BACKWARD !!!!!");
                     },
                     child: const SizedBox(
                       width: 100,
-                      height: 120,
+                      height: 80,
                       child: Center(
                         child: Text("BACKWARD"),
                       ),
