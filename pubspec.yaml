@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_blue_plus: ^1.25.7
+  flutter_blue_plus: ^1.35.5
   permission_handler: ^11.0.1
 
 
