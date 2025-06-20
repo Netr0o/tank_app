@@ -17,6 +17,8 @@ const int lL_EN = 8;
 
 int speedValue = 150;
 
+String current = "";
+
 void setup() {
   Serial.begin(9600);
   while (!Serial);
@@ -109,6 +111,7 @@ void forward() {
   analogWrite(rLPWM, speedValue);
   analogWrite(lRPWM, 0);
   analogWrite(lLPWM, speedValue);
+  current = "f";
 }
 
 void backward() {
@@ -116,13 +119,15 @@ void backward() {
   analogWrite(rLPWM, 0);
   analogWrite(lRPWM, speedValue);
   analogWrite(lLPWM, 0);
+  current = "b";
 }
 
 void turnRight() {
   analogWrite(rRPWM, speedValue);
   analogWrite(rLPWM, 0);
   analogWrite(lRPWM,0);
-  analogWrite(lLPWM,  speedValue);
+  analogWrite(lLPWM, speedValue);
+  current = "tr";
 }
 
 void turnLeft() {
@@ -130,11 +135,35 @@ void turnLeft() {
   analogWrite(rLPWM, speedValue);
   analogWrite(lRPWM, speedValue);
   analogWrite(lLPWM, 0);
+  current = "tl";
 }
 
-void stop() {
+void progressiveBrake(int active1, int passive1, int active2, int passive2) {
+  int steps = speedValue / 3;
+  for (int i = 0; i <= steps; i++) {
+    int pwm = max(speedValue - 3 * i, 0);
+    analogWrite(active1, pwm);
+    analogWrite(passive1, 0);
+    analogWrite(active2, pwm);
+    analogWrite(passive2, 0);
+    delay(10);
+  }
   analogWrite(rRPWM, 0);
   analogWrite(rLPWM, 0);
   analogWrite(lRPWM, 0);
   analogWrite(lLPWM, 0);
+
+  current = "";
+}
+
+void stop() {
+  if (current == "f") {
+    progressiveBrake(rLPWM, rRPWM, lLPWM, lRPWM);
+  } else if (current == "b") {
+    progressiveBrake(rRPWM, rLPWM, lRPWM, lLPWM);
+  } else if (current == "tr") {
+    progressiveBrake(rRPWM, rLPWM, lLPWM, lRPWM);
+  } else if (current == "tl") {
+    progressiveBrake(rLPWM, rRPWM, lRPWM, lLPWM);
+    }
 }
