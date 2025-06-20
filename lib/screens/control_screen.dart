@@ -38,12 +38,12 @@ class _ControlScreenState extends State<ControlScreen> {
     var status = await requestBluetoothPermissions();
 
     if (!status) {
-      print("perm pas accordée");
+      print("perm not allowed");
     }
 
     bool isOn = await FlutterBluePlus.isOn;
-    if (isOn) {
-      print("bluetooth disconnected");
+    if (!isOn) {
+      print("Bluetooth is off. Please enable Bluetooth.");
       return;
     }
 
@@ -51,13 +51,13 @@ class _ControlScreenState extends State<ControlScreen> {
 
     FlutterBluePlus.scanResults.listen((results) async {
       for (ScanResult r in results) {
-        print(r);
+        print("result : ${r.device.name}");
         if (r.advertisementData.advName == targetDeviceName) {
           print("found device: ${r.advertisementData.advName}");
           FlutterBluePlus.stopScan();
           await _connectToDevice(r.device);
           break;
-        }
+        } else {print("fail !!!");}
       }
     });
   }
@@ -81,35 +81,37 @@ class _ControlScreenState extends State<ControlScreen> {
     }
   }
 
-  void _sendOne() async {
+  void _forward() async {
     if (_characteristic != null) {
       await _characteristic!.write([0x01], withoutResponse: false);
-      print("send: 0x01");
     }
   }
 
-  void _sendZero() async {
+  void _stop() async {
     if (_characteristic != null) {
       await _characteristic!.write([0x0]);
-      print("send: 0x00");
     }
   }
 
-  int leftTrack = 0;
-  int rightTrack = 0;
-
-  void setBothTracks(int value) {
-    setState(() {
-      leftTrack = value;
-      rightTrack = value;
-    });
-    // send to tank
+  void _backward() async {
+    if (_characteristic != null) {
+      await _characteristic!.write([0x2]);
+    }
   }
 
-  void sendToTank() {
-    // Replace this with your Bluetooth or Serial communication
-    print("Left: $leftTrack, Right: $rightTrack");
+  void _turnLeft() async {
+    if (_characteristic != null) {
+      await _characteristic!.write([0x03]);
+    }
   }
+
+  void _turnRight() async {
+    if (_characteristic != null) {
+      await _characteristic!.write([0x04]);
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -138,32 +140,14 @@ class _ControlScreenState extends State<ControlScreen> {
         child: Row(
           children: <Widget>[
             const SizedBox(
-              width: 40,
-            ),
-            RotatedBox(
-              quarterTurns: -1,
-              child: Center(
-                child: SizedBox(
-                  width: 300,
-                  height: 40,
-                  child: Slider(
-                    value: rightTrack.toDouble(),
-                    max: 14,
-                    divisions: 14,
-                    label: "$rightTrack",
-                    onChanged: (value) {
-                      setState(() => rightTrack = value.toInt());
-                    },
-                  ),
-                ),
-              ),
+              width: 90,
             ),
             SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: _characteristic != null ? _sendOne : null,
+                    onPressed: _characteristic != null ? _forward : null,
                     child: const SizedBox(
                       width: 100,
                       height: 80,
@@ -173,7 +157,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     ),
                   ),
                   ElevatedButton(
-                      onPressed: _characteristic != null ? _sendZero : null,
+                      onPressed: _characteristic != null ? _stop : null,
                       child: const SizedBox(
                         width: 100,
                         height: 80,
@@ -182,9 +166,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         ),
                       )),
                   ElevatedButton(
-                    onPressed: () {
-                      print("BACKWARD !!!!!");
-                    },
+                    onPressed: _characteristic != null ? _backward : null,
                     child: const SizedBox(
                       width: 100,
                       height: 80,
@@ -208,9 +190,7 @@ class _ControlScreenState extends State<ControlScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      print("TURN LEFT !!!!!");
-                    },
+                    onPressed:  _characteristic != null ? _turnLeft : null,
                     child: const SizedBox(
                       width: 100,
                       height: 120,
@@ -220,9 +200,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      print("TURN RIGHT !!!!!");
-                    },
+                    onPressed: _characteristic != null ? _turnRight : null,
                     child: const SizedBox(
                       width: 100,
                       height: 120,
@@ -232,24 +210,6 @@ class _ControlScreenState extends State<ControlScreen> {
                     ),
                   ),
                 ],
-              ),
-            ),
-            RotatedBox(
-              quarterTurns: -1,
-              child: Center(
-                child: SizedBox(
-                  width: 300,
-                  height: 40,
-                  child: Slider(
-                    value: leftTrack.toDouble(),
-                    max: 14,
-                    divisions: 14,
-                    label: "$leftTrack",
-                    onChanged: (value) {
-                      setState(() => leftTrack = value.toInt());
-                    },
-                  ),
-                ),
               ),
             ),
           ],
