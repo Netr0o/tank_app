@@ -3,6 +3,7 @@ import 'package:tank_app/screens/firing_screen.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tank_app/theme/colors.dart';
 
 class ControlScreen extends StatefulWidget {
   const ControlScreen({super.key});
@@ -19,10 +20,6 @@ class _ControlScreenState extends State<ControlScreen> {
   final Guid serviceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
   final Guid characteristicUuid = Guid("19B10001-E8F2-537E-4F6C-D104768A1214");
 
-  final widgetTextColor = const Color(0xffff6f00);
-  final backgroundColor = const Color(0xff0b0b0b);
-  final widgetTextColorTest = const Color(0xffff1744);
-  // tech green : 0xff64dd17
 
   @override
   void initState() {
@@ -216,7 +213,8 @@ class _ControlScreenState extends State<ControlScreen> {
                             ),
                           ),
                         ),
-                      )),
+                      ),
+                    ),
                   ElevatedButton(
                     onPressed: _characteristic != null ? _backward : null,
                     style: ElevatedButton.styleFrom(
