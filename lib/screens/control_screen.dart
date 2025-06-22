@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tank_app/screens/firing_screen.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:tank_app/theme/colors.dart';
+import 'package:tank_app/theme/styles.dart';
 
 class ControlScreen extends StatefulWidget {
   const ControlScreen({super.key});
@@ -143,7 +142,7 @@ class _ControlScreenState extends State<ControlScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.black,
+        color: backgroundColor,
         // decoration: const BoxDecoration(
         //   gradient: LinearGradient(
         //     begin: Alignment.bottomLeft,
@@ -175,7 +174,7 @@ class _ControlScreenState extends State<ControlScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: backgroundColor,
+                      backgroundColor: buttonBackgroundColor,
                     ),
                     onPressed: _characteristic != null ? _forward : null,
                     child: SizedBox(
@@ -184,19 +183,14 @@ class _ControlScreenState extends State<ControlScreen> {
                       child: Center(
                         child: Text(
                           "FORWARD",
-                          style: GoogleFonts.orbitron(
-                            color: widgetTextColor,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: buttonTextStyle
                         ),
                       ),
                     ),
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: backgroundColor,
+                        backgroundColor: buttonBackgroundColor,
                       ),
                       onPressed: _characteristic != null ? _stop : null,
                       child: SizedBox(
@@ -205,12 +199,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         child: Center(
                           child: Text(
                             "STOP",
-                            style: GoogleFonts.orbitron(
-                              color: widgetTextColor,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                            ),
+                            style: buttonTextStyle
                           ),
                         ),
                       ),
@@ -218,7 +207,7 @@ class _ControlScreenState extends State<ControlScreen> {
                   ElevatedButton(
                     onPressed: _characteristic != null ? _backward : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: backgroundColor,
+                      backgroundColor: buttonBackgroundColor,
                     ),
                     child: SizedBox(
                       width: 100,
@@ -226,12 +215,7 @@ class _ControlScreenState extends State<ControlScreen> {
                       child: Center(
                         child: Text(
                           "BACKWARD",
-                          style: GoogleFonts.orbitron(
-                            color: widgetTextColor,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: buttonTextStyle
                         ),
                       ),
                     ),
@@ -244,17 +228,12 @@ class _ControlScreenState extends State<ControlScreen> {
               height: 60,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: backgroundColor,
+                  backgroundColor: buttonBackgroundColor,
                 ),
                 child: Text(
                   "barrel commands",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.orbitron(
-                    color: widgetTextColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: buttonTextStyle
                 ),
                 onPressed: () {
                   Navigator.push(context,
@@ -271,7 +250,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed: _characteristic != null ? _rotateLeft : null,
                         child: SizedBox(
@@ -282,7 +261,7 @@ class _ControlScreenState extends State<ControlScreen> {
                               alignment: Alignment.center,
                               transform: Matrix4.identity()
                                 ..scale(-1.0, 1.0, 1.0),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.refresh_rounded,
                                 color: widgetTextColor,
                                 size: 50.0,
@@ -293,11 +272,11 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed:
                             _characteristic != null ? _rotateRight : null,
-                        child: SizedBox(
+                        child: const SizedBox(
                           width: 100,
                           height: 100,
                           child: Center(
@@ -316,10 +295,10 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed: _characteristic != null ? _turnLeft : null,
-                        child: SizedBox(
+                        child: const SizedBox(
                           width: 110,
                           height: 120,
                           child: Center(
@@ -333,10 +312,10 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed: _characteristic != null ? _turnRight : null,
-                        child: SizedBox(
+                        child: const SizedBox(
                           width: 110,
                           height: 120,
                           child: Center(
@@ -355,7 +334,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed:
                             _characteristic != null ? _turnLeftBack : null,
@@ -366,7 +345,7 @@ class _ControlScreenState extends State<ControlScreen> {
                             alignment: Alignment.center,
                             transform: Matrix4.identity()
                               ..scale(1.0, -1.0, 1.0),
-                            child: Icon(
+                            child: const Icon(
                               Icons.undo,
                               color: widgetTextColor,
                               size: 50.0,
@@ -376,10 +355,10 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: backgroundColor,
+                          backgroundColor: buttonBackgroundColor,
                         ),
                         onPressed:
-                            _characteristic != null ? _turnLeftBack : null,
+                            _characteristic != null ? _turnRightBack : null,
                         child: SizedBox(
                           width: 100,
                           height: 110,
@@ -387,7 +366,7 @@ class _ControlScreenState extends State<ControlScreen> {
                             alignment: Alignment.center,
                             transform: Matrix4.identity()
                               ..scale(1.0, -1.0, 1.0),
-                            child: Icon(
+                            child: const Icon(
                               Icons.redo,
                               color: widgetTextColor,
                               size: 50.0,
