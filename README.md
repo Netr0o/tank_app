@@ -28,6 +28,6 @@ This app allows remote control of a custom-built mini tank, made using:
 - **Microcontroller**: Arduino R4 WiFi
 - **Motor driver**: two bts7960
 - **Power**: LiPo battery 12V
-- **Chassis**: Fully 3D-printed (custom design)
+- **Chassis**: Fully 3D-printed (personal design)
 
-Arduino code is in the `/arduino_tank_code/code_tank` folder.
+Arduino code is in the `/arduino_tank_code/code_tank` folder
