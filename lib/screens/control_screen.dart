@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tank_app/main.dart';
 import 'package:tank_app/screens/firing_screen.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:tank_app/theme/styles.dart';
 
 class ControlScreen extends StatefulWidget {
@@ -12,131 +11,6 @@ class ControlScreen extends StatefulWidget {
 }
 
 class _ControlScreenState extends State<ControlScreen> {
-  BluetoothDevice? _device;
-  BluetoothCharacteristic? _characteristic;
-
-  final String targetDeviceName = "MOUHAHA";
-  final Guid serviceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
-  final Guid characteristicUuid = Guid("19B10001-E8F2-537E-4F6C-D104768A1214");
-
-
-  @override
-  void initState() {
-    super.initState();
-    _startScan();
-  }
-
-  Future<bool> requestBluetoothPermissions() async {
-    final status = await [
-      Permission.bluetoothScan,
-      Permission.bluetoothConnect,
-      Permission.location
-    ].request();
-    return status.values.every((s) => s.isGranted);
-  }
-
-  void _startScan() async {
-    var status = await requestBluetoothPermissions();
-
-    if (!status) {
-      print("perm not allowed");
-    }
-
-    bool isOn = await FlutterBluePlus.isOn;
-    if (!isOn) {
-      print("Bluetooth is off. Please enable Bluetooth.");
-      return;
-    }
-
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
-
-    FlutterBluePlus.scanResults.listen((results) async {
-      for (ScanResult r in results) {
-        print("result : ${r.device.name}");
-        if (r.advertisementData.advName == targetDeviceName) {
-          print("found device: ${r.advertisementData.advName}");
-          FlutterBluePlus.stopScan();
-          await _connectToDevice(r.device);
-          break;
-        } else {
-          print("fail !!!");
-        }
-      }
-    });
-  }
-
-  Future<void> _connectToDevice(BluetoothDevice device) async {
-    await device.connect();
-    _device = device;
-
-    List<BluetoothService> services = await device.discoverServices();
-    for (var service in services) {
-      if (service.uuid == serviceUuid) {
-        for (var characteristic in service.characteristics) {
-          if (characteristic.uuid == characteristicUuid) {
-            _characteristic = characteristic;
-            print("found !!!!!");
-            setState(() {});
-            return;
-          }
-        }
-      }
-    }
-  }
-
-  void _forward() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x01], withoutResponse: false);
-    }
-  }
-
-  void _stop() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x0]);
-    }
-  }
-
-  void _backward() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x2]);
-    }
-  }
-
-  void _rotateLeft() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x3]);
-    }
-  }
-
-  void _rotateRight() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x04]);
-    }
-  }
-
-  void _turnLeft() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x10]);
-    }
-  }
-
-  void _turnRight() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x11]);
-    }
-  }
-
-  void _turnLeftBack() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x12]);
-    }
-  }
-
-  void _turnRightBack() async {
-    if (_characteristic != null) {
-      await _characteristic!.write([0x13]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +50,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: buttonBackgroundColor,
                     ),
-                    onPressed: _characteristic != null ? _forward : null,
+                    onPressed: BluetoothManager().forward,
                     child: SizedBox(
                       width: 100,
                       height: 100,
@@ -192,7 +66,7 @@ class _ControlScreenState extends State<ControlScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: buttonBackgroundColor,
                       ),
-                      onPressed: _characteristic != null ? _stop : null,
+                      onPressed: BluetoothManager().stop,
                       child: SizedBox(
                         width: 100,
                         height: 100,
@@ -205,7 +79,7 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                     ),
                   ElevatedButton(
-                    onPressed: _characteristic != null ? _backward : null,
+                    onPressed: BluetoothManager().backward,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: buttonBackgroundColor,
                     ),
@@ -252,7 +126,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed: _characteristic != null ? _rotateLeft : null,
+                        onPressed: BluetoothManager().rotateLeft,
                         child: SizedBox(
                           width: 100,
                           height: 100,
@@ -274,8 +148,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed:
-                            _characteristic != null ? _rotateRight : null,
+                        onPressed: BluetoothManager().rotateRight,
                         child: const SizedBox(
                           width: 100,
                           height: 100,
@@ -297,7 +170,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed: _characteristic != null ? _turnLeft : null,
+                        onPressed: BluetoothManager().turnLeft,
                         child: const SizedBox(
                           width: 110,
                           height: 120,
@@ -314,7 +187,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed: _characteristic != null ? _turnRight : null,
+                        onPressed: BluetoothManager().turnRight,
                         child: const SizedBox(
                           width: 110,
                           height: 120,
@@ -336,8 +209,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed:
-                            _characteristic != null ? _turnLeftBack : null,
+                        onPressed: BluetoothManager().turnLeftBack,
                         child: SizedBox(
                           width: 100,
                           height: 110,
@@ -357,8 +229,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonBackgroundColor,
                         ),
-                        onPressed:
-                            _characteristic != null ? _turnRightBack : null,
+                        onPressed: BluetoothManager().turnRightBack,
                         child: SizedBox(
                           width: 100,
                           height: 110,
