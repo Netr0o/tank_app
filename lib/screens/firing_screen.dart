@@ -61,7 +61,7 @@ class _FiringScreenState extends State<FiringScreen> {
                   progressBarWidth: 30,
                 ),
                 customColors: CustomSliderColors(
-                  progressBarColor: Colors.deepOrange,
+                  progressBarColor: test2color,
                   trackColor: Colors.grey.shade800,
                   dotColor: Colors.white,
                   shadowColor: Colors.black,
