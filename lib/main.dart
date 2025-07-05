@@ -89,43 +89,42 @@ class BluetoothManager {
     }
   }
 
-  void forward() async {
-    await _characteristic?.write([0x01]);
-  }
 
   void stop() async {
     await _characteristic?.write([0x00]);
+  }
+
+  void forward() async {
+    await _characteristic?.write([0x01]);
   }
 
   void backward() async {
     await _characteristic?.write([0x02]);
   }
 
-  void rotateLeft() async {
+  void turnLeft() async {
     await _characteristic?.write([0x03]);
   }
 
-  void rotateRight() async {
+  void turnRight() async {
     await _characteristic?.write([0x04]);
   }
 
-  void turnLeft() async {
+  void rotateLeft() async {
+    await _characteristic?.write([0x0f]);
+  }
+
+  void rotateRight() async {
     await _characteristic?.write([0x10]);
   }
 
-  void turnRight() async {
+  void turnLeftBack() async {
     await _characteristic?.write([0x11]);
   }
 
-  void turnLeftBack() async {
+  void turnRightBack() async {
     await _characteristic?.write([0x12]);
   }
-
-  void turnRightBack() async {
-    await _characteristic?.write([0x13]);
-  }
-
-
 }
 
 
