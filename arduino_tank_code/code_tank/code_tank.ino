@@ -17,7 +17,12 @@ const int lL_EN = 8;
 
 int speedValue = 150;
 
-String current = "";
+enum Direction {
+  NONE, FORWARD, BACKWARD, ROTATE_LEFT, ROTATE_RIGHT,
+  TURN_LEFT, TURN_RIGHT, TURN_LEFT_BACK, TURN_RIGHT_BACK
+};
+
+Direction current = NONE;
 
 void setup() {
   Serial.begin(9600);
@@ -95,8 +100,12 @@ void loop() {
             Serial.print("Speed set to: ");
             Serial.println(speedValue);
             break;
+          case 15: rotateLeft(); break;
+          case 16: rotateRight(); break;
+          case 17: turnLeftBack(); break;
+          case 18: turnRightBack(); break;
           default:
-            stop(); // Safety
+            stop();
   }
 }
     }
@@ -111,7 +120,7 @@ void forward() {
   analogWrite(rLPWM, speedValue);
   analogWrite(lRPWM, 0);
   analogWrite(lLPWM, speedValue);
-  current = "f";
+  current = FORWARD;
 }
 
 void backward() {
@@ -119,51 +128,107 @@ void backward() {
   analogWrite(rLPWM, 0);
   analogWrite(lRPWM, speedValue);
   analogWrite(lLPWM, 0);
-  current = "b";
-}
-
-void turnRight() {
-  analogWrite(rRPWM, speedValue);
-  analogWrite(rLPWM, 0);
-  analogWrite(lRPWM,0);
-  analogWrite(lLPWM, speedValue);
-  current = "tr";
+  current = BACKWARD;
 }
 
 void turnLeft() {
   analogWrite(rRPWM, 0);
   analogWrite(rLPWM, speedValue);
+  analogWrite(lRPWM, 0);
+  analogWrite(lLPWM, 0);
+  current = TURN_LEFT;
+}
+
+void turnRight() {
+  analogWrite(rRPWM, 0);
+  analogWrite(rLPWM, 0);
+  analogWrite(lRPWM, 0);
+  analogWrite(lLPWM, speedValue);
+  current = TURN_RIGHT;  
+}
+
+void turnLeftBack() {
+  analogWrite(rRPWM, speedValue);
+  analogWrite(rLPWM, 0);
+  analogWrite(lRPWM, 0);
+  analogWrite(lLPWM, 0);
+  current = TURN_LEFT_BACK;
+}
+
+void turnRightBack() {
+  analogWrite(rRPWM, 0);
+  analogWrite(rLPWM, 0);
   analogWrite(lRPWM, speedValue);
   analogWrite(lLPWM, 0);
-  current = "tl";
+  current = TURN_RIGHT_BACK;  
+}
+
+void rotateLeft() {
+  analogWrite(rRPWM, 0);
+  analogWrite(rLPWM, speedValue);
+  analogWrite(lRPWM, speedValue);
+  analogWrite(lLPWM, 0);
+  current = ROTATE_LEFT;
+}
+
+void rotateRight() {
+  analogWrite(rRPWM, speedValue);
+  analogWrite(rLPWM, 0);
+  analogWrite(lRPWM, 0);
+  analogWrite(lLPWM, speedValue);
+  current = ROTATE_RIGHT;
+}
+
+void stop() {
+  int a1, p1, a2, p2;
+
+  if (current == FORWARD) {
+    a1 = rLPWM ; p1 = rRPWM ; a2 = lLPWM ; p2 = lRPWM; // forward
+  } else if (current == BACKWARD) {
+    a1 = rRPWM ; p1 = rLPWM ; a2 = lRPWM ; p2 = lLPWM; // backward
+  } // =======
+  else if (current == ROTATE_LEFT) {
+    a1 = rLPWM ; p1 = rRPWM ; a2 = lRPWM ; p2 = lLPWM; // rotate left
+  } else if (current == ROTATE_RIGHT) {
+    a1 = rRPWM ; p1 = rLPWM ; a2 = lLPWM ; p2 = lRPWM; // rotate right
+  } // =======
+  else if (current == TURN_LEFT) {
+    a1 = rLPWM ; p1 = rRPWM ; a2 = 0 ; p2 = lRPWM; // turn left - one track activated
+  } else if (current == TURN_RIGHT) {
+    a1 = lLPWM ; p1 = rLPWM ; a2 = 0 ; p2 = lRPWM; // rotate right - one track activated
+  } // =======
+  else if (current == TURN_LEFT_BACK) {
+    a1 = rRPWM ; p1 = rLPWM ; a2 = 0 ; p2 = lRPWM; // turn back left - one track activated
+  } else if (current == TURN_RIGHT_BACK) {
+    a1 = lRPWM ; p1 = rLPWM ; a2 = 0 ; p2 = lLPWM; // rotate back right - one track activated
+  }
+  progressiveBrake(a1, p1, a2, p2);
 }
 
 void progressiveBrake(int active1, int passive1, int active2, int passive2) {
   int steps = speedValue / 3;
-  for (int i = 0; i <= steps; i++) {
+  if (active2 == 0) {
+    for (int i = 0; i <= steps; i++) {
+      int pwm = max(speedValue - 3 * i, 0);
+      analogWrite(active1, pwm);
+      analogWrite(passive1, 0);
+      analogWrite(active2, 0);
+      analogWrite(passive2, 0);
+      delay(10);
+  }
+  } else {for (int i = 0; i <= steps; i++) {
     int pwm = max(speedValue - 3 * i, 0);
     analogWrite(active1, pwm);
     analogWrite(passive1, 0);
     analogWrite(active2, pwm);
     analogWrite(passive2, 0);
     delay(10);
+    }
   }
   analogWrite(rRPWM, 0);
   analogWrite(rLPWM, 0);
   analogWrite(lRPWM, 0);
   analogWrite(lLPWM, 0);
 
-  current = "";
-}
-
-void stop() {
-  if (current == "f") {
-    progressiveBrake(rLPWM, rRPWM, lLPWM, lRPWM);
-  } else if (current == "b") {
-    progressiveBrake(rRPWM, rLPWM, lRPWM, lLPWM);
-  } else if (current == "tr") {
-    progressiveBrake(rRPWM, rLPWM, lLPWM, lRPWM);
-  } else if (current == "tl") {
-    progressiveBrake(rLPWM, rRPWM, lRPWM, lLPWM);
-    }
+  current = NONE;
 }
