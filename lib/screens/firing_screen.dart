@@ -12,7 +12,8 @@ class FiringScreen extends StatefulWidget {
 
 class _FiringScreenState extends State<FiringScreen> {
 
-  final elevation = 0;
+  final int elevation = 0;
+  final List<String> rotaValue = ["-0.6", "-6", "+6", "+0.6"];
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +35,11 @@ class _FiringScreenState extends State<FiringScreen> {
                   child: Text("tank control", style: buttonTextStyle),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const ControlScreen()));
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const ControlScreen()
+                      ),
+                    );
                   },
                 ),
               ],
@@ -44,41 +47,58 @@ class _FiringScreenState extends State<FiringScreen> {
             const SizedBox(
               width: 20,
             ),
-            SleekCircularSlider(
-              min: -40,
-              max: 30,
-              initialValue: 0,
-              appearance: CircularSliderAppearance(
-                infoProperties: InfoProperties(
-                  modifier: (double value) {
-                    value = -1 * value;
-                    return '${value.toStringAsFixed(0)}°';
-                  },
-                ),
-                customWidths: CustomSliderWidths(
-                  handlerSize: 8,
-                  trackWidth: 8,
-                  progressBarWidth: 30,
-                ),
-                customColors: CustomSliderColors(
-                  progressBarColor: test2color,
-                  trackColor: Colors.grey.shade800,
-                  dotColor: Colors.white,
-                  shadowColor: Colors.black,
-                ),
-                angleRange: 70,
-                startAngle: 320,
-                size: 300,
-              ),
-              onChange: (double value) {
-                int elevation = -1 * value.round();
-                print(elevation);
-              },
+
+            Row(
+                children: [
+                  for(int i=0; i<4; i++)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: buttonBackgroundColor,
+                      ),
+                      onPressed: (){
+                        print(rotaValue[i]);
+                      },
+                      child: Text(rotaValue[i], style: buttonTextStyle),
+                    ),
+
+
+                ]
             ),
-            Transform.rotate(
-              angle: elevation * 3.1415 / 180,
-              child: const Icon(Icons.expand_less, size: 40, color: widgetTextColor,),
-            ),
+            // SleekCircularSlider(
+            //   min: -40,
+            //   max: 30,
+            //   initialValue: 0,
+            //   appearance: CircularSliderAppearance(
+            //     infoProperties: InfoProperties(
+            //       modifier: (double value) {
+            //         value = -1 * value;
+            //         return '${value.toStringAsFixed(0)}°';
+            //       },
+            //     ),
+            //     customWidths: CustomSliderWidths(
+            //       handlerSize: 8,
+            //       trackWidth: 8,
+            //       progressBarWidth: 30,
+            //     ),
+            //     customColors: CustomSliderColors(
+            //       progressBarColor: test2color,
+            //       trackColor: Colors.grey.shade800,
+            //       dotColor: Colors.white,
+            //       shadowColor: Colors.black,
+            //     ),
+            //     angleRange: 70,
+            //     startAngle: 320,
+            //     size: 300,
+            //   ),
+            //   onChange: (double value) {
+            //     int elevation = -1 * value.round();
+            //     print(elevation);
+            //   },
+            // ),
+            // Transform.rotate(
+            //   angle: elevation * 3.1415 / 180,
+            //   child: const Icon(Icons.expand_less, size: 40, color: widgetTextColor),
+            // ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonBackgroundColor,
