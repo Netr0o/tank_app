@@ -64,41 +64,6 @@ class _FiringScreenState extends State<FiringScreen> {
 
                 ]
             ),
-            // SleekCircularSlider(
-            //   min: -40,
-            //   max: 30,
-            //   initialValue: 0,
-            //   appearance: CircularSliderAppearance(
-            //     infoProperties: InfoProperties(
-            //       modifier: (double value) {
-            //         value = -1 * value;
-            //         return '${value.toStringAsFixed(0)}°';
-            //       },
-            //     ),
-            //     customWidths: CustomSliderWidths(
-            //       handlerSize: 8,
-            //       trackWidth: 8,
-            //       progressBarWidth: 30,
-            //     ),
-            //     customColors: CustomSliderColors(
-            //       progressBarColor: test2color,
-            //       trackColor: Colors.grey.shade800,
-            //       dotColor: Colors.white,
-            //       shadowColor: Colors.black,
-            //     ),
-            //     angleRange: 70,
-            //     startAngle: 320,
-            //     size: 300,
-            //   ),
-            //   onChange: (double value) {
-            //     int elevation = -1 * value.round();
-            //     print(elevation);
-            //   },
-            // ),
-            // Transform.rotate(
-            //   angle: elevation * 3.1415 / 180,
-            //   child: const Icon(Icons.expand_less, size: 40, color: widgetTextColor),
-            // ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonBackgroundColor,
