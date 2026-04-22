@@ -9,6 +9,7 @@ void Tank::begin(){
 
 void Tank::setSpeed(uint8_t s){
     speed = s;
+    move(current);
 }
 
 void Tank::movStop(){
