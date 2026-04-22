@@ -1,44 +1,56 @@
 #include <Arduino.h>
-#include <Stepper.h>
-#define stepsPerRevolution 2048
+#include <ArduinoBLE.h>
+#include "Motor.hpp"
+#include "Tank.hpp"
 
-// Creates an instance of stepper class
-// Pins entered in sequence IN1-IN3-IN2-IN4 for proper step sequence
-Stepper Smotor = Stepper(stepsPerRevolution, 8, 10, 9, 11);
 
+
+BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth® Low Energy LED Service
+
+// Bluetooth® Low Energy LED Switch Characteristic - custom 128-bit UUID, read and writable by central
+BLEByteCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
+
+Motor leftMotor(9, 10, 4, 5);
+Motor rightMotor(6, 3, 7, 8);
+Tank tank = Tank(leftMotor, rightMotor);
 
 void setup() {
-  Serial.begin(9600);
-  Smotor.setSpeed(10);
-  Serial.println("READY");
+	tank.begin();
+
+    if (!BLE.begin()) {
+        Serial.println("starting Bluetooth® Low Energy module failed!");
+    	while (1);
+  	}
+
+
+	// set advertised local name and service UUID:
+	BLE.setLocalName("MOUHAHA");
+	BLE.setAdvertisedService(ledService);
+
+	// add the characteristic to the service
+	ledService.addCharacteristic(switchCharacteristic);
+
+	// add service
+	BLE.addService(ledService);
+
+	// set the initial value for the characteristic:
+	switchCharacteristic.writeValue(0);
+
+	// start advertising
+	BLE.advertise();
+
 }
 
 void loop() {
-  if(Serial.available()>0){
-    char c = Serial.read();
+  	BLEDevice central = BLE.central();
 
-    if(c=='\r' || c=='\n')return;
-
-    Serial.println("VALUE: ");
-    Serial.println(c);
-
-    switch (c)
-    {
-    case 'a':
-      Smotor.step(-10);
-      break;
-    case 'z':
-      Smotor.step(10);
-      break;
-    case 'q':
-      Smotor.step(-100);
-      break;
-    case 's':
-      Smotor.step(100);
-      break;
-    
-    default:
-      break;
-    }
-  }
+	if(central){
+		while(central.connected()){
+			if(switchCharacteristic.written()){
+				uint8_t cmd_received = switchCharacteristic.value();
+				Direction dir = tank.command(cmd_received); 
+				tank.move(dir);
+			}
+		}
+	}
 }
