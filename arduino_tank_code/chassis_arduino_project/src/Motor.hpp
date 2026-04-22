@@ -10,22 +10,23 @@ class Motor{
         uint8_t pwmBackward;
         uint8_t enable1;
         uint8_t enable2;
-        uint8_t current;
+        uint8_t state;
+        uint8_t currentSpeed;
         
     public:
-        Motor(uint8_t fwd, uint8_t back, uint8_t en1, uint8_t en2) : 
-            pwmForward(fwd), pwmBackward(back), enable1(en1), enable2(en2){}
+        Motor(uint8_t fwd, uint8_t back, uint8_t en1, uint8_t en2);
 
-        void begin(){}
+        void begin();
 
-        void forward(uint8_t speed){}
+        void forward(uint8_t speed);
 
-        void backward(uint8_t speed){}
+        void backward(uint8_t speed);
 
-        void stop(){}
+        void stop();
 
-        void progressiveBrake(uint8_t currentSpeed){}
-}
+    private:
+        void progressiveBrake();
+};
 
 
 #endif
