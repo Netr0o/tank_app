@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tank_app/main.dart';
+import 'package:tank_app/bluetoothServices/bluetooth_services.dart';
 import 'package:tank_app/screens/firing_screen.dart';
 import 'package:tank_app/theme/styles.dart';
 
